@@ -1,0 +1,302 @@
+package com.capgemini.librarymanagementsystemjdbc.dao;
+
+import java.io.FileInputStream;
+import java.sql.Connection;
+import java.util.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Properties;
+
+import com.capgemini.librarymanagementsystemjdbc.dto.Admin;
+import com.capgemini.librarymanagementsystemjdbc.dto.Books;
+import com.capgemini.librarymanagementsystemjdbc.dto.User;
+import com.capgemini.librarymanagementsystemjdbc.exception.LibraryExceptions;
+
+public class AdminDAOImplementation implements AdminDAO {
+
+	@Override
+	public boolean adminLogin(String adminEmail, String adminpassword) {
+		// TODO Auto-generated method stub
+		// Admin bean = new Admin();
+
+		try (FileInputStream fin = new FileInputStream("db.properties")) {
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			Class.forName(pro.getProperty("path")).newInstance();
+			String dburl = pro.getProperty("dburl");
+			try (Connection conn = DriverManager.getConnection(dburl)) {
+				String query = pro.getProperty("auth_student");
+				try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+					// LinkedList<Admin> bean2 = new LinkedList<Admin>();
+
+					pstmt.setString(1, adminEmail);
+					pstmt.setString(2, adminpassword);
+
+					ResultSet rs = pstmt.executeQuery();
+					if (rs.next()) {
+						return true;
+					}
+					throw new LibraryExceptions("invalid email and password");
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+	}
+
+	@Override
+	public boolean addBook(Books book) {
+		// TODO Auto-generated method stub
+		try (FileInputStream fin = new FileInputStream("dburl.properties")) {
+
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			Class.forName(pro.getProperty("path")).newInstance();
+			String dburl = pro.getProperty("dburl");
+			try (Connection conn = DriverManager.getConnection(dburl)) {
+				String query = pro.getProperty("add_book");
+				try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+					pstmt.setString(1, book.getBookId());
+					pstmt.setString(2, book.getBookName());
+					pstmt.setString(3, book.getAuthor());
+					pstmt.setDate(4, book.getDateAdded());
+					pstmt.setDate(5, book.getReturnDate());
+					pstmt.setString(6, book.getBookPublisher());
+					pstmt.setString(7, "false");
+					pstmt.setString(8, "false");
+					pstmt.setString(9, book.getUserEmail());
+
+					int count = pstmt.executeUpdate();
+					if (count != 0) {
+						return true;
+					}
+					throw new LibraryExceptions("book not added");
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean removeBook(String bookid) {
+		// TODO Auto-generated method stub
+		try (FileInputStream fin = new FileInputStream("db.properties")) {
+
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			Class.forName(pro.getProperty("path")).newInstance();
+			String dburl = pro.getProperty("dburl");
+			try (Connection conn = DriverManager.getConnection(dburl)) {
+				String query = pro.getProperty("remove_book");
+				try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+					pstmt.setString(1, bookid);
+					int count = pstmt.executeUpdate();
+					if (count != 0) {
+						return true;
+					}
+					throw new LibraryExceptions("book not removed");
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean issueBook(String userEmail, String bookId) {
+		// TODO Auto-generated method stub
+		try (FileInputStream fin = new FileInputStream("db.properties")) {
+
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			Class.forName(pro.getProperty("path")).newInstance();
+			String dburl = pro.getProperty("dburl");
+			try (Connection conn = DriverManager.getConnection(dburl)) {
+				String query = pro.getProperty("issue_book");
+				try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+					pstmt.setString(1, bookId);
+					pstmt.setString(2, userEmail);
+					Date date = new Date();
+					pstmt.setDate(3, (java.sql.Date) date);
+					// pstmt.setDate(4,c);
+					int count = pstmt.executeUpdate();
+					if (count != 0) {
+						return true;
+					}
+					throw new LibraryExceptions("book not issued");
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean collectBook(String userEmail, String BookId) {
+		// TODO Auto-generated method stub
+		try (FileInputStream fin = new FileInputStream("db.properties")) {
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			Class.forName(pro.getProperty("path")).newInstance();
+			String dburl = pro.getProperty("dburl");
+			try (Connection conn = DriverManager.getConnection(dburl)) {
+				String query = pro.getProperty("collect_book");
+				try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+					pstmt.setString(1, userEmail);
+					pstmt.setString(2, BookId);
+
+					int count = pstmt.executeUpdate();
+					if (count != 0) {
+						return true;
+					}
+					throw new LibraryExceptions("book not collected");
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+
+	}
+
+//	public static boolean acceptRequest(User user, int count) {
+//		// TODO Auto-generated method stub
+//		boolean isAdded = false;
+//		if (count == 0) {
+//			LibraryDatabase.userInfo.add(user);
+//			isAdded = true;
+//		}
+//		if (count > 0) {
+//			for (User user1 : LibraryDatabase.userInfo) {
+//				if (user1.getEmail().equals(user.getEmail())) {
+//					throw new LibraryExceptions("Email already exists");
+//				}
+//			}
+//			LibraryDatabase.userInfo.add(user);
+//			isAdded = true;
+//		}
+//		return isAdded;
+//	}
+
+	@Override
+	public boolean addUser(User user, int count) {
+		// TODO Auto-generated method stub
+		try (FileInputStream fin = new FileInputStream("db.properties")) {
+
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			// Class.forName(pro.getProperty("path")).newInstance();
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			String dburl = "jdbc:mysql://localhost:3306/library_management_system?user=root&password=root";
+			try (Connection conn = DriverManager.getConnection(dburl)) {
+				String query = "insert into admin values (?,?,?,?,?)";
+				try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+					pstmt.setString(1, user.getUserName());
+					pstmt.setString(2, user.getUserId());
+					pstmt.setString(3, user.getMobileNum());
+					pstmt.setString(4, user.getEmail());
+					pstmt.setString(5, user.getPassword());
+					int count1 = pstmt.executeUpdate();
+					if (count1 != 0) {
+						return true;
+					} else {
+						throw new LibraryExceptions("User not registered");
+					}
+				}
+
+			} catch (LibraryExceptions e) {
+				throw new LibraryExceptions("Book Already exists");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+
+	}
+
+	@Override
+	public boolean removeUser(String userEmail) {
+
+		try (FileInputStream fin = new FileInputStream("dburl.properties")) {
+
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			Class.forName(pro.getProperty("path")).newInstance();
+			String dburl = pro.getProperty("dburl");
+			try (Connection conn = DriverManager.getConnection(dburl)) {
+				String query = pro.getProperty("remove_user");
+				try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+					pstmt.setString(1, userEmail);
+					int count = pstmt.executeUpdate();
+					if (count != 0) {
+						return true;
+					}
+					throw new LibraryExceptions("user not removed");
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+
+	public boolean updateUser(User user) {
+		// TODO Auto-generated method stub
+		try (FileInputStream fin = new FileInputStream("db.properties")) {
+
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			Class.forName(pro.getProperty("path")).newInstance();
+			String dburl = pro.getProperty("dburl");
+			try (Connection conn = DriverManager.getConnection(dburl)) {
+				String query = pro.getProperty("update_user");
+				try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+					pstmt.setString(1, user.getUserName());
+					pstmt.setString(2, user.getEmail());
+					pstmt.setString(3, user.getPassword());
+					pstmt.setString(4, user.getFirstName());
+					pstmt.setString(5, user.getLastName());
+					pstmt.setString(6, user.getDepartment());
+					pstmt.setString(7, user.getUserId());
+					pstmt.setString(8, user.getMobileNum());
+					pstmt.setInt(9, 0);
+					pstmt.setString(10, "user");
+					int count = pstmt.executeUpdate();
+					if (count != 0) {
+						return true;
+					}
+					throw new LibraryExceptions("user not upated");
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+
+}

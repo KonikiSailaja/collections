@@ -1,0 +1,274 @@
+package com.capgemini.librarymanagementsystemjdbc.dao;
+
+import java.io.FileInputStream;
+import java.sql.DriverManager;
+import java.util.Properties;
+
+import com.capgemini.librarymanagementsystemjdbc.dto.Admin;
+import com.capgemini.librarymanagementsystemjdbc.dto.Books;
+import com.capgemini.librarymanagementsystemjdbc.dto.User;
+import com.capgemini.librarymanagementsystemjdbc.exception.LibraryExceptions;
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.PreparedStatement;
+
+public class AdminDAOImplementation implements AdminDAO{
+
+	/*	@Override
+	public boolean register(Admin info) {
+		try(FileInputStream	fin = new FileInputStream("dburl.properties")){
+
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			//Class.forName(pro.getProperty("path")).newInstance();
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			String dburl="jdbc:mysql://localhost:3306/library_management_system?user=root&password=root";
+			try(Connection conn = DriverManager.getConnection(dburl)){
+				String query = "insert into admin values (?,?,?,?,?)";
+				try(PreparedStatement pstmt = conn.prepareStatement(query)){
+					pstmt.setString(1, info.getAname());
+					pstmt.setInt(2, info.getAid());
+					pstmt.setLong(3, info.getMobile());
+					pstmt.setString(4, info.getEmail());
+					pstmt.setString(5, info.getPassword());
+					int count = pstmt.executeUpdate();
+				}
+			}
+
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+
+	}*/
+
+	@Override
+	public boolean adminLogin1(String email, String password) {
+		//Admin bean = new Admin();
+		
+		try(FileInputStream fin = new FileInputStream("dburl.properties")){
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			//Class.forName(pro.getProperty("path")).newInstance();
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			String dburl="jdbc:mysql://localhost:3306/library_management_system?user=root&password=root";
+			try(Connection conn = DriverManager.getConnection(dburl)){
+				String query = "select email,password from admin where email=? and password=?";
+				try(PreparedStatement pstmt = conn.prepareStatement(query)){
+					//LinkedList<Admin> bean2 = new LinkedList<Admin>(); 
+					
+					pstmt.setString(1, email);
+					pstmt.setString(2, password); 
+
+					ResultSet rs = pstmt.executeQuery();
+					if(rs.next()) {
+						return true;
+					}
+					throw new LibraryException("invalid email and password");	
+				} 
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+	}
+
+	@Override
+	public boolean addBook1(Books book) {
+		try(FileInputStream	fin = new FileInputStream("dburl.properties")){
+
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			//Class.forName(pro.getProperty("path")).newInstance();
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			String dburl="jdbc:mysql://localhost:3306/library_management_system?user=root&password=root";
+			try(Connection conn = DriverManager.getConnection(dburl)){
+				String query = "insert into book values (?,?,?,?,?)";
+				try(PreparedStatement pstmt = conn.prepareStatement(query)){
+					pstmt.setString(1, book.getBookName());
+					pstmt.setString(2, book.getBookId());
+					pstmt.setString(3, book.getAuthor());
+					//pstmt.setString(4, book.getCategory());
+					//pstmt.setString(5, book.getPublishername());
+					int count = pstmt.executeUpdate();
+				}
+			}
+
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+}
+
+
+	public boolean removeBook(String bookid) {
+		// TODO Auto-generated method stub
+		try(FileInputStream	fin = new FileInputStream("dburl.properties")){
+
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			//Class.forName(pro.getProperty("path")).newInstance();
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			String dburl="jdbc:mysql://localhost:3306/library_management_system?user=root&password=root";
+			try(Connection conn = DriverManager.getConnection(dburl)){
+				String query = "delete from  book values where bookId=?";
+				try(PreparedStatement pstmt = conn.prepareStatement(query)){
+					pstmt.setString(1,bookid);
+					int count = pstmt.executeUpdate();
+				}
+			}
+
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean issueBook(String userEmail, String bookId) {
+		// TODO Auto-generated method stub
+		try(FileInputStream	fin = new FileInputStream("dburl.properties")){
+
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			//Class.forName(pro.getProperty("path")).newInstance();
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			String dburl="jdbc:mysql://localhost:3306/library_management_system?user=root&password=root";
+			try(Connection conn = DriverManager.getConnection(dburl)){
+				String query = "insert into book values (?,?)";
+				try(PreparedStatement pstmt = conn.prepareStatement(query)){
+					pstmt.setString(1, userEmail);
+					pstmt.setString(2, bookId);
+					//pstmt.setString(4, book.getCategory());
+					//pstmt.setString(5, book.getPublishername());
+					int count = pstmt.executeUpdate();
+				}
+			}
+
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean collectBook(String userEmail, String BookId) {
+		// TODO Auto-generated method stub
+		try(FileInputStream fin = new FileInputStream("dburl.properties")){
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			//Class.forName(pro.getProperty("path")).newInstance();
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			String dburl="jdbc:mysql://localhost:3306/library_management_system?user=root&password=root";
+			try(Connection conn = DriverManager.getConnection(dburl)){
+				String query = "select email,bookid from admin where email=? and bookid=?";
+				try(PreparedStatement pstmt = conn.prepareStatement(query)){
+					//LinkedList<Admin> bean2 = new LinkedList<Admin>(); 
+					
+					pstmt.setString(1, userEmail);
+					pstmt.setString(2, BookId); 
+
+					ResultSet rs = pstmt.executeQuery();
+					if(rs.next()) {
+						/*if(bean2.contains(email.equals(email)) && password.equals(password)/bean.getEmail().equals(email)&&bean.getPassword().equals(password)//bean2.contains(bean.getEmail().equals(email)&&bean.getPassword().equals(password))/){
+							System.out.println("login successful");
+							return bean;
+						}*/
+						
+						return true;
+					}
+					throw new LibraryException("invalid email and bookId");	
+				} 
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+
+	}
+
+	public static boolean acceptRequest(User user, int count) {
+		// TODO Auto-generated method stub
+		boolean isAdded = false;
+		if (count == 0) {
+			LibraryDatabase.userInfo.add(user);
+			isAdded = true;
+		}
+		if (count > 0) {
+			for (User user1 : LibraryDatabase.userInfo) {
+				if (user1.getEmail().equals(user.getEmail())) {
+					throw new LibraryException("Email already exists");
+				}
+			}
+			LibraryDatabase.userInfo.add(user);
+			isAdded = true;
+		}
+		return isAdded;
+	}
+
+	public boolean addUser(User user, int count) {
+		// TODO Auto-generated method stub
+		try(FileInputStream	fin = new FileInputStream("dburl.properties")){
+
+			Properties pro = new Properties();
+			pro.load(fin);
+
+			//Class.forName(pro.getProperty("path")).newInstance();
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			String dburl="jdbc:mysql://localhost:3306/library_management_system?user=root&password=root";
+			try(Connection conn = DriverManager.getConnection(dburl)){
+				String query = "insert into admin values (?,?,?,?,?)";
+				try(PreparedStatement pstmt = conn.prepareStatement(query)){
+					pstmt.setString(1, user.getUserName());
+					pstmt.setString(2, user.getUserId());
+					pstmt.setString(3, user.getMobileNum());
+					pstmt.setString(4, user.getEmail());
+					pstmt.setString(5, user.getPassword());
+					int count1 = pstmt.executeUpdate();
+					if(count1) {
+						return true;
+					}else {
+						throw new LibraryException("User not registered");
+					}
+				}
+
+		}catch(LibraryException e) {
+			throw new LibraryException("Book Already exists");
+		}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+
+	}
+
+	public boolean removeUser(String userEmail) {
+		// TODO Auto-generated method stub
+		for (User user2 : LibraryDatabase.userInfo) {
+			if (user2.getUserId().equals(userEmail)) {
+				LibraryDatabase.userInfo.remove(user2);
+				return true;
+			}
+		}
+		throw new LibraryExceptions("User does not Exists to remove");
+	}
+
+	public boolean updateUser(User user) {
+		// TODO Auto-generated method stub
+		boolean isUpdated = false;
+		for (User user3 : LibraryDatabase.userInfo) {
+			if (user3.getEmail().equals(user.getEmail())) {
+				user3 = user;
+				return true;
+			} 
+				throw new LibraryExceptions("User does not exists to update");
+		}
+		return isUpdated;
+	}
+
+}

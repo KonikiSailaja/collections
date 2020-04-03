@@ -1,0 +1,16 @@
+package com.java.practice;
+
+import java.util.Scanner;
+
+public class Sample5 {
+	Scanner scanner=new Scanner(System.in);
+	System.out.println("1 is Addition");
+	System.out.println("2 is Multiplication");
+	System.out.println("3 is division");
+	System.out.println("4 is Substraction");
+	
+	int choice=scanner.nextInt();
+	
+	
+
+}
