@@ -2,6 +2,8 @@
 <section name="Workbench">
 	<section name="MavenProjectWizardLocationPage">
 		<list key="location">
+			<item value="F:\LibraryManagementSystem"/>
+			<item value="F:\LibraryManagementSystem\librarymanagementsystemjdbc"/>
 			<item value="C:\Users\new\Desktop\LibraryManagementSystem\librarymanagementsystem"/>
 		</list>
 		<list key="projectNameTemplate">
@@ -26,6 +28,8 @@
 	</section>
 	<section name="Maven2ProjectWizardArchifactPage">
 		<list key="package">
+			<item value="com.capgemini.librarymanagementsystemjpa"/>
+			<item value="com.capgemini.librarymanagementsystemhibernate"/>
 			<item value="com.capgemini.librarymanagementsystemjdbc"/>
 			<item value="com.capgemini.librarymanagementsystem"/>
 		</list>
@@ -33,6 +37,8 @@
 			<item value="com.capgemini"/>
 		</list>
 		<list key="artifactId">
+			<item value="librarymanagementsystemjpa"/>
+			<item value="librarymanagementsystemhibernate"/>
 			<item value="librarymanagementsystemjdbc"/>
 			<item value="librarymanagementsystem"/>
 		</list>

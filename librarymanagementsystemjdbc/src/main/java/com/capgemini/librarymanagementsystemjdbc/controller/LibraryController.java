@@ -343,8 +343,8 @@ public class LibraryController {
 									boolean res = service1.borrowBook(id, userEmailId);
 									if (res) {
 										System.out.println("Book is borrowed");
-										//String returnDate = service1.returnBook(presentDate);
-										//System.out.println("The book should be borrowed by " + returnDate);
+										// String returnDate = service1.returnBook(presentDate);
+										// System.out.println("The book should be borrowed by " + returnDate);
 									}
 								} catch (LibraryExceptions e) {
 									System.err.println(e.getMessage());
@@ -411,7 +411,7 @@ public class LibraryController {
 				}
 			} while (choice != 0);
 		} catch (IllegalArgumentException e) {
-			
+
 			System.err.println(e.getMessage());
 
 		}

@@ -20,8 +20,6 @@ public class AdminDAOImplementation implements AdminDAO {
 
 	@Override
 	public boolean adminLogin(String adminEmail, String adminpassword) {
-		// TODO Auto-generated method stub
-		// Admin bean = new Admin();
 
 		try (FileInputStream fin = new FileInputStream("db.properties")) {
 			Properties pro = new Properties();
