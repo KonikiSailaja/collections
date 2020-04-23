@@ -1,23 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.io.Serializable"/>
-<fullyQualifiedTypeName name="java.util.LinkedList"/>
-<fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.dto.IssueBooks"/>
-<fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.dao.UserDAOImplementation"/>
-<fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.dao.UserDAO"/>
-<fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.service.UserServiceImplementation"/>
-<fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.factory.UserFactory"/>
-<fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.service.UserService"/>
-<fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.dto.Books"/>
-<fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.exception.BookvalidationException"/>
-<fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.db.DataBase"/>
-<fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.exception.AdminException"/>
 <fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.dao.AdminDAOImplementation"/>
 <fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.service.AdminService"/>
 <fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.service.AdminServiceImplementation"/>
 <fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.dao.AdminDAO"/>
 <fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.factory.AdminFactory"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.exception.UserException"/>
 <fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.db.LibraryDataBase"/>
 <fullyQualifiedTypeName name="com.capgemini.librarymanagementsystem.factory.LibraryFactory"/>
@@ -51,10 +38,26 @@
 <fullyQualifiedTypeName name="com.capgemini.librarymanagementsystemjdbc.dto.User"/>
 <fullyQualifiedTypeName name="com.capgemini.librarymanagementsystemjdbc.exception.LibraryExceptions"/>
 <fullyQualifiedTypeName name="com.capgemini.librarymanagementsystemjdbc.service.UserService"/>
-<fullyQualifiedTypeName name="java.util.Date"/>
 <fullyQualifiedTypeName name="java.sql.Date"/>
 <fullyQualifiedTypeName name="java.sql.Statement"/>
 <fullyQualifiedTypeName name="java.util.Calendar"/>
 <fullyQualifiedTypeName name="java.sql.SQLException"/>
 <fullyQualifiedTypeName name="java.text.SimpleDateFormat"/>
+<fullyQualifiedTypeName name="javax.persistence.Column"/>
+<fullyQualifiedTypeName name="javax.persistence.Entity"/>
+<fullyQualifiedTypeName name="javax.persistence.Table"/>
+<fullyQualifiedTypeName name="javax.persistence.Id"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="java.io.Serializable"/>
+<fullyQualifiedTypeName name="com.capgemini.librarymanagement.dto.Books"/>
+<fullyQualifiedTypeName name="com.capgemini.librarymanagement.dto.Users"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="com.capgemini.librarymanagement.dto.Request"/>
+<fullyQualifiedTypeName name="com.capgemini.librarymanagement.exception.LibraryExceptions"/>
+<fullyQualifiedTypeName name="com.capgemini.librarymanagement.service.UserServiceImplementation"/>
+<fullyQualifiedTypeName name="com.capgemini.librarymanagement.service.UserService"/>
+<fullyQualifiedTypeName name="com.capgemini.librarymanagement.dao.UserDAOImplementation"/>
+<fullyQualifiedTypeName name="com.capgemini.librarymanagement.dao.UserDAO"/>
+<fullyQualifiedTypeName name="com.capgemini.librarymanagement.factory.LibraryFactory"/>
+<fullyQualifiedTypeName name="java.text.DateFormat"/>
 </qualifiedTypeNameHistroy>

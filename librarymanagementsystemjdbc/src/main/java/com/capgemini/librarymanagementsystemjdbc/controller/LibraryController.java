@@ -1,421 +1,963 @@
 package com.capgemini.librarymanagementsystemjdbc.controller;
 
-import java.util.Date;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
-import com.capgemini.librarymanagementsystemjdbc.dto.Books;
-import com.capgemini.librarymanagementsystemjdbc.dto.User;
-import com.capgemini.librarymanagementsystemjdbc.exception.LibraryExceptions;
+import com.capgemini.librarymanagementsystemjdbc.dto.BookInfo;
+import com.capgemini.librarymanagementsystemjdbc.dto.LibraryUsers;
+import com.capgemini.librarymanagementsystemjdbc.dto.RequestInfo;
+import com.capgemini.librarymanagementsystemjdbc.exception.LibraryException;
 import com.capgemini.librarymanagementsystemjdbc.factory.LibraryFactory;
-import com.capgemini.librarymanagementsystemjdbc.service.AdminService;
-import com.capgemini.librarymanagementsystemjdbc.service.UserService;
-import com.capgemini.librarymanagementsystemjdbc.validation.LibraryValidation;
+import com.capgemini.librarymanagementsystemjdbc.service.LibraryService;
+import com.capgemini.librarymanagementsystemjdbc.validation.Validation;
 
 public class LibraryController {
+			public static void main(String[] args) {
+			LibraryService service = LibraryFactory.getLibraryService();
+			Validation validation = new Validation();
 
-	static int count = 0;
-
-	public static void main(String[] args) {
-
-		LibraryController controller = new LibraryController();
-
-		try {
-			controller.operations();
-		} catch (InputMismatchException e) {
-			System.out.println("Enter valid data");
-		} finally {
-			try {
-				controller.operations();
-			} catch (InputMismatchException e) {
-				System.out.println("Enter valid data");
-			} finally {
-				controller.operations();
-			}
-		}
-	}
-
-	public void operations() {
-
-		LibraryValidation validate = new LibraryValidation();
-
-		try {
-
-			Scanner sc = new Scanner(System.in);
+			int id = 0;
+			int userId = 0;
 			int choice = 0;
-			do {
-				System.out.println("press 1 to Admin");
-				System.out.println("press 2 to user");
-				System.out.println("press 3 to register");
-				choice = sc.nextInt();
+			int adminChoice = 0;
+			int userChoice = 0;
+			int searchBook = 0;
+			int isbn = 0;
+			int requestId = 0;
 
-				switch (choice) {
-				case 1:
-					System.out.println("Enter Admin Mail ID");
-					String adminEmail = sc.next();
-					System.out.println("Enter Admin Password");
-					String adminPwd = sc.next();
+			String name = null;
+			String emailId = null;
+			String password = null;
+			String role = null;
+			String authourName = null;
+			String bookTitle = null;
 
-					AdminService adminService = LibraryFactory.getAdminService();
-					boolean adminInfo = false;
-					try {
-						adminInfo = adminService.adminLogin(adminEmail, adminPwd);
-					} catch (LibraryExceptions e) {
-						System.err.println(e.getMessage());
-						break;
-					}
+			double price = 0.0;
 
-					if (adminInfo == true) {
-						System.out.println("Login Successfull");
-						int choice1;
-						do {
-							System.out.println("press 0 to Terminate");
-							System.out.println("press 1 to AddBook");
-							System.out.println("press 2 to RemoveBook");
-							System.out.println("press 3 to IssueBook");
-							System.out.println("press 4 to CollectBook");
-							System.out.println("press 5 to AddUser");
-							System.out.println("press 6 to RemoveUser");
-							System.out.println("press 7 to UpdateUser");
-							System.out.println("Enter your choice");
+			boolean isAvailable = false;
+			boolean result = false;
+			boolean flag = false;
 
-							choice1 = sc.nextInt();
-							switch (choice1) {
+			try (Scanner scanner = new Scanner(System.in);) {
 
-							case 1:
-								Books book = new Books();
-								try {
-									System.out.println("Enter the 6 digit Book Id");
-									String bookId = sc.next();
-									if (validate.validateId(bookId))
-										book.setBookId(bookId);
-									System.out.println("Enter Book Name");
-									String bookName = sc.next();
-									if (validate.validateName(bookName))
-										book.setBookName(bookName);
-									System.out.println("Enter Author Name");
-									String authorName = sc.next();
-									if (validate.validateName(authorName))
-										book.setAuthor(authorName);
-									System.out.println("Enter Publishers Name");
-									String bookPublisher = sc.next();
-									if (validate.validateName(authorName))
-										book.setBookPublisher(bookPublisher);
+				do {
 
-									boolean res = false;
+					do {
+						try {
+							System.out.println("1. Register User");
+							System.out.println("2. Login");
+//							System.out.println("3. Exit");
+							System.out.println("Enter Your Choice");
+							choice = scanner.nextInt();
+							flag = true;
 
-									res = adminService.addBook(book);
-									if (res) {
-										System.out.println("Book successfully added");
-									}
-								} catch (LibraryExceptions e) {
-									System.err.println(e.getMessage());
-								}
-								break;
-							case 2:
-								System.out.println("Enter Id To Remove The Book");
-								String removeId = sc.next();
-								if (validate.validateId(removeId)) {
-								}
-								boolean remove = false;
-								try {
-									remove = adminService.removeBook(removeId);
-									if (remove) {
-										System.out.println("Book Removed Successfully");
-									}
-								} catch (LibraryExceptions e) {
-									System.err.println(e.getMessage());
-								}
-								break;
-
-							case 3:
-								try {
-									System.out.println("Enter the User Email Id");
-									String userEmail = sc.next();
-									if (validate.validateEmail(userEmail)) {
-									}
-									System.out.println("Enter the Book Id to issue book");
-									String bookId1 = sc.next();
-									if (validate.validateId(bookId1)) {
-									}
-									boolean issued = false;
-
-									issued = adminService.issueBook(userEmail, bookId1);
-									if (issued) {
-										System.out.println("Book Issued Successfully");
-									}
-								} catch (LibraryExceptions e) {
-									System.err.println(e.getMessage());
-								}
-								break;
-							case 4:
-								try {
-									System.out.println("Enter the User Mail Id");
-									String userEmail1 = sc.next();
-									if (validate.validateEmail(userEmail1)) {
-									}
-									System.out.println("Enter The Book Id To Return");
-									String bookId2 = sc.next();
-									if (validate.validateId(bookId2)) {
-									}
-									boolean collected = false;
-
-									collected = adminService.collectBook(userEmail1, bookId2);
-									if (collected) {
-										System.out.println("Book Collected Successfully");
-									}
-								} catch (LibraryExceptions e) {
-									System.err.println(e.getMessage());
-								}
-								break;
-							case 5:
-								try {
-									User user = new User();
-									System.out.println("Enter Email");
-									String email = sc.next();
-									if (validate.validateEmail(email))
-										user.setEmail(email);
-									System.out.println("Enter the 6 digit password");
-									String password1 = sc.next();
-									if (validate.validatePassword(password1))
-										user.setPassword(password1);
-									System.out.println("Enter User Name");
-									String userName = sc.next();
-									if (validate.validateName(userName))
-										user.setUserName(userName);
-									System.out.println("Enter The First Name");
-									String firstName = sc.next();
-									if (validate.validateName(firstName))
-										user.setFirstName(firstName);
-									System.out.println("Enter The Last Name");
-									String lastName = sc.next();
-									if (validate.validateName(lastName))
-										user.setLastName(lastName);
-									System.out.println("Enter The Department");
-									String department = sc.next();
-									if (validate.validateName(department))
-										user.setDepartment(department);
-									System.out.println("Enter The 6 digit User Id");
-									String userId1 = sc.next();
-									if (validate.validateId(userId1))
-										user.setUserId(userId1);
-									System.out.println("Enter The Mobile Number");
-									String mobileNumber = sc.next();
-									if (validate.validateMobileNumber(mobileNumber))
-										user.setMobileNum(mobileNumber);
-									System.out.println("Enter The Number Of Books");
-									int numberOfBooks = sc.nextInt();
-									user.setNumberOfBooks(numberOfBooks);
-
-									boolean admininfo1 = false;
-									admininfo1 = adminService.addUser(user);
-									if (admininfo1) {
-										System.out.println("User successfully added");
-										count++;
-									}
-								} catch (LibraryExceptions e) {
-									System.err.println(e.getMessage());
-								}
-								break;
-							case 6:
-								try {
-									System.out.println("Enter Email Id To Remove User");
-									String userEmail2 = sc.next();
-									if (validate.validateEmail(userEmail2)) {
-									}
-									boolean remove1 = false;
-
-									remove1 = adminService.removeUser(userEmail2);
-									if (remove1) {
-										System.out.println("User Removed Successfully");
-									}
-								} catch (LibraryExceptions e) {
-									System.err.println(e.getMessage());
-								}
-								break;
-							case 7:
-								User user5 = new User();
-								try {
-									System.out.println("Enter Email");
-									String email1 = sc.next();
-									if (validate.validateEmail(email1))
-										user5.setEmail(email1);
-									System.out.println("Enter the 6 digit password");
-									String password2 = sc.next();
-									if (validate.validatePassword(password2))
-										user5.setPassword(password2);
-									System.out.println("Enter User Name");
-									String userName1 = sc.next();
-									if (validate.validateName(userName1))
-										user5.setUserName(userName1);
-									System.out.println("Enter The First Name");
-									String firstName1 = sc.next();
-									if (validate.validateName(firstName1))
-										user5.setFirstName(firstName1);
-									System.out.println("Enter The Last Name");
-									String lastName1 = sc.next();
-									if (validate.validateName(lastName1))
-										user5.setLastName(lastName1);
-									System.out.println("Enter The Department");
-									String department1 = sc.next();
-									if (validate.validateName(department1))
-										user5.setDepartment(department1);
-									System.out.println("Enter The 6 digit User Id");
-									String userId3 = sc.next();
-									if (validate.validateId(userId3))
-										user5.setUserId(userId3);
-									System.out.println("Enter The Mobile Number");
-									String mobileNumber1 = sc.next();
-									if (validate.validateMobileNumber(mobileNumber1))
-										user5.setMobileNum(mobileNumber1);
-									System.out.println("Enter The Number Of Books");
-									int numberOfBooks1 = sc.nextInt();
-									user5.setNumberOfBooks(numberOfBooks1);
-
-									boolean admininfo2 = false;
-									admininfo2 = adminService.updateUser(user5);
-									if (admininfo2) {
-										System.out.println("User successfully Updated");
-									}
-								} catch (LibraryExceptions e) {
-									System.err.println(e.getMessage());
-								}
-								break;
-							}
-
-						} while (choice1 != 0);
-						break;
-					}
-				case 2:
-					System.out.println("Enter User Mail Id");
-					String userMail = sc.next();
-					System.out.println("Enter User Password");
-					String userPwd = sc.next();
-
-					UserService service1 = LibraryFactory.getUserService();
-					boolean userInfo = false;
-					try {
-						userInfo = service1.login(userMail, userPwd);
-					} catch (LibraryExceptions e) {
-						System.err.println(e.getMessage());
-						break;
-					}
-
-					if (userInfo == true) {
-						System.out.println("Login Successfull");
-						int choice2;
-						do {
-							System.out.println("press 0 to Terminate");
-							System.out.println("Press 1 to search for book");
-							System.out.println("Press 2 to borrow book");
-							System.out.println("Enter your choice");
-							choice2 = sc.nextInt();
-
-							switch (choice2) {
-							case 1:
-								try {
-									System.out.println("Enter book name");
-									String name = sc.next();
-									if (validate.validateName(name)) {
-									}
-
-									boolean result = service1.searchBookName(name);
-									if (result) {
-										System.out.println("Book is present");
-									}
-								} catch (LibraryExceptions e) {
-									System.err.println(e.getMessage());
-								}
-								break;
-							case 2:
-								try {
-									System.out.println("Enter book id");
-									String id = sc.next();
-									if (validate.validateId(id)) {
-									}
-									System.out.println("Enter User Email id");
-									String userEmailId = sc.next();
-									if (validate.validateEmail(userEmailId)) {
-									}
-									Date presentDate = new Date();
-// System.out.println("Present date="+presentDate);
-
-									boolean res = service1.borrowBook(id, userEmailId);
-									if (res) {
-										System.out.println("Book is borrowed");
-										// String returnDate = service1.returnBook(presentDate);
-										// System.out.println("The book should be borrowed by " + returnDate);
-									}
-								} catch (LibraryExceptions e) {
-									System.err.println(e.getMessage());
-								}
-								break;
-
-							}
-						} while (choice2 != 0);
-						break;
-					}
-				case 3:
-					UserService service2 = LibraryFactory.getUserService();
-					User information = new User();
-					try {
-						System.out.println("Enter the 6 digit User Id");
-						String regId = sc.next();
-						if (validate.validateId(regId))
-							information.setUserId(regId);
-						System.out.println("Enter Username");
-						String regUserName = sc.next();
-						if (validate.validateName(regUserName))
-							information.setUserName(regUserName);
-						System.out.println("Enter the 6 digit Password");
-						String regPassword = sc.next();
-						if (validate.validatePassword(regPassword))
-							information.setPassword(regPassword);
-						System.out.println("Enter Firstname");
-						String regFirstName = sc.next();
-						if (validate.validateName(regFirstName))
-							information.setFirstName(regFirstName);
-						System.out.println("Enter Lastname");
-						String regLastName = sc.next();
-						if (validate.validateName(regLastName))
-							information.setLastName(regLastName);
-						System.out.println("Enter Department");
-						String regDepartment = sc.next();
-						if (validate.validateName(regDepartment))
-							information.setDepartment(regDepartment);
-						System.out.println("Enter Email");
-						String regEmail = sc.next();
-						if (validate.validateEmail(regEmail))
-							information.setEmail(regEmail);
-						System.out.println("Enter MobileNumber");
-						String mobileNumber = sc.next();
-						if (validate.validateMobileNumber(mobileNumber))
-							information.setMobileNum(mobileNumber);
-						System.out.println("Enter NoOfBooks");
-						int noOfBooks = sc.nextInt();
-						information.setNumberOfBooks(noOfBooks);
-
-						boolean check1 = false;
-						check1 = service2.register(information);
-						if (check1) {
-							System.out.println("Admin Registered the user successfully");
-							count++;
+						} catch (InputMismatchException e) {
+							System.err.println("Choice Should Contain Only Digits");
+							flag = false;
+							scanner.next();
 						}
-					} catch (LibraryExceptions e) {
-						System.err.println(e.getMessage());
+					} while (!flag);
+
+					switch (choice) {
+					case 1:
+						LibraryUsers info = new LibraryUsers();
+
+						do {
+							try {
+								System.out.println("Enter Id:");
+								id = scanner.nextInt();
+								validation.validatedId(id);
+								flag = true;
+							} catch (InputMismatchException e) {
+								System.err.println("ID Should Contains Only Digits");
+								flag = false;
+								scanner.next();
+							} catch (LibraryException e) {
+								System.err.println(e.getMessage());
+								flag = false;
+							}
+						} while (!flag);
+
+						do {
+							try {
+								System.out.println("Enter Name:");
+								name = scanner.next();
+								validation.validatedName(name);
+								flag = true;
+							} catch (LibraryException e) {
+								System.err.println(e.getMessage());
+								flag = false;
+							}
+						} while (!flag);
+
+						do {
+							try {
+								System.out.println("Enter Email Id:");
+								emailId = scanner.next();
+								validation.validatedEmail(emailId);
+								flag = true;
+							} catch (LibraryException e) {
+								System.err.println(e.getMessage());
+								flag = false;
+							}
+						} while (!flag);
+
+						do {
+							try {
+								System.out.println("Enter Password:");
+								password = scanner.next();
+								validation.validatedPassword(password);
+								flag = true;
+							} catch (LibraryException e) {
+								System.err.println(e.getMessage());
+								flag = false;
+							}
+						} while (!flag);
+
+						System.out.println("Enter Role:");
+						role = scanner.next();
+
+						info.setId(id);
+						info.setName(name);
+						info.setEmailId(emailId);
+						info.setPassword(password);
+						info.setRole(role);
+
+						try {
+							result = service.register(info);
+							if (result) {
+								System.out.println("Registration Completed");
+							} else {
+								System.err.println("Registration Failed");
+							}
+						} catch (LibraryException e) {
+							System.err.println(e.getMessage());
+						}
+
+						break;
+					case 2:
+						LibraryUsers users = new LibraryUsers();
+
+						do {
+							try {
+								System.out.println("Enter User Id ");
+								userId = scanner.nextInt();
+								validation.validatedId(userId);
+								flag = true;
+							} catch (InputMismatchException e) {
+								System.err.println("ID Should Contains Only Digits");
+								flag = false;
+								scanner.next();
+							} catch (LibraryException e) {
+								System.err.println(e.getMessage());
+								flag = false;
+							}
+						} while (!flag);
+
+						do {
+							try {
+								System.out.println("Enter Password");
+								password = scanner.next();
+								validation.validatedPassword(password);
+								flag = true;
+							} catch (LibraryException e) {
+								System.err.println(e.getMessage());
+								flag = false;
+							}
+						} while (!flag);
+
+						try {
+
+							users = service.authentication(userId, password);
+							if (users != null) {
+								System.out.println(users.getRole() + " Logged in");
+
+								if (users.getRole().equalsIgnoreCase("admin")) {
+									do {
+										System.out.println("1. Add Book");
+										System.out.println("2. Delete Book");
+										System.out.println("3. Show Books");
+										System.out.println("4. Show Users");
+										System.out.println("5. Show Requests");
+										System.out.println("6. Search Books");
+										System.out.println("7. Issue Book");
+										System.out.println("8. Receive Book");
+
+										System.out.println("0. Main Menu");
+
+										System.out.println("Enter Your Choice:");
+										adminChoice = scanner.nextInt();
+
+										switch (adminChoice) {
+										case 1:
+											BookInfo book = new BookInfo();
+
+											do {
+												try {
+													System.out.println("Enter book id");
+													isbn = scanner.nextInt();
+													validation.validatedId(isbn);
+													flag = true;
+												} catch (InputMismatchException e) {
+													System.err.println("ID Should Contains Only Digits");
+													flag = false;
+													scanner.next();
+												} catch (LibraryException e) {
+													System.err.println(e.getMessage());
+													flag = false;
+												}
+											} while (!flag);
+
+											do {
+												try {
+													System.out.println("Enter Book Title");
+													bookTitle = scanner.next();
+													validation.validatedName(bookTitle);
+													flag = true;
+												} catch (LibraryException e) {
+													System.err.println(e.getMessage());
+													flag = false;
+												}
+											} while (!flag);
+
+											do {
+												try {
+													System.out.println("Enter Authour Name");
+													authourName = scanner.next();
+													validation.validatedName(authourName);
+													flag = true;
+												} catch (LibraryException e) {
+													System.err.println(e.getMessage());
+													flag = false;
+												}
+											} while (!flag);
+
+											do {
+												try {
+													System.out.println("Enter Book Price");
+													price = scanner.nextDouble();
+													flag = true;
+												} catch (InputMismatchException e) {
+													System.err.println("ID Should Contains Only Digits");
+													flag = false;
+													scanner.next();
+												} 
+											} while (!flag);
+
+											do {
+												try {
+													System.out.println("Is Book Available");
+													isAvailable = scanner.nextBoolean();
+
+													flag = true;
+												} catch (InputMismatchException e) {
+													System.err.println("Enter Boolean value true/false");
+													flag = false;
+													scanner.next();
+												} 
+											} while (!flag);
+
+											book.setIsbn(isbn);
+											book.setBookTitle(bookTitle);
+											book.setAuthourName(authourName);
+											book.setPrice(price);
+											book.setAvailable(isAvailable);
+
+											try {
+												result = service.addBook(book);
+												if (result) {
+													System.out.println("Book is added to the library");
+												} else {
+													System.err.println("Book Connot Be Added");
+												}
+											} catch (LibraryException e) {
+												System.err.println(e.getMessage());
+											}
+
+											break;
+										case 2:
+
+											do {
+												try {
+													System.out.println("Enter Book ID To Remove:");
+													isbn = scanner.nextInt();
+													validation.validatedId(isbn);
+													flag = true;
+												} catch (InputMismatchException e) {
+													System.err.println("ID Should Contains Only Digits");
+													flag = false;
+													scanner.next();
+												} catch (LibraryException e) {
+													System.err.println(e.getMessage());
+													flag = false;
+												}
+											} while (!flag);
+
+											try {
+												result = service.deleteBook(isbn);
+												if (result) {
+													System.out.println("Book is Removed From The Library");
+												} else {
+													System.out.println("Book Cannot be Removed From The Library");
+												}
+											} catch (LibraryException e) {
+												System.err.println(e.getMessage());
+											}
+											break;
+										case 3:
+											System.out.println("Books In Library Are:");
+											try {
+												List<BookInfo> books = service.showBooks();
+
+												for (BookInfo bookInfo : books) {
+													System.out.println(
+															"Book Id -----------------------------> " + bookInfo.getIsbn());
+													System.out.println("Book Title --------------------------> "
+															+ bookInfo.getBookTitle());
+													System.out.println("Authour Name ------------------------> "
+															+ bookInfo.getAuthourName());
+													System.out.println("Book price --------------------------> "
+															+ bookInfo.getPrice());
+													System.out.println("Is Available ------------------------> "
+															+ bookInfo.isAvailable());
+													System.out.println(
+															"-------------------------------------------------------------------------");
+
+												}
+
+											} catch (LibraryException e) {
+												System.err.println(e.getMessage());
+											}
+											break;
+										case 4:
+											System.out.println("Users Of Library Are:");
+											try {
+												List<LibraryUsers> libraryUsers = service.showUsers();
+
+												for (LibraryUsers user : libraryUsers) {
+													System.out.println(
+															"user Id -----------------------------> " + user.getId());
+													System.out.println(
+															"user Name ---------------------------> " + user.getName());
+													System.out.println(
+															"user Email Id -----------------------> " + user.getEmailId());
+													System.out.println("Books Borrowed ----------------------> "
+															+ user.getNoOfBooksBorrowed());
+													System.out.println(
+															"Role --------------------------------> " + user.getRole());
+													System.out.println(
+															"-------------------------------------------------------------------------");
+
+												}
+
+											} catch (LibraryException e) {
+												System.err.println(e.getMessage());
+											}
+											break;
+										case 5:
+											System.out.println("Request For Books Are:");
+											try {
+												List<RequestInfo> requestInfos = service.showRequests();
+
+												for (RequestInfo requestInfo : requestInfos) {
+													System.out.println("request Id -----------------------------> "
+															+ requestInfo.getRequestId());
+													System.out.println("User Id --------------------------------> "
+															+ requestInfo.getUserId());
+													System.out.println("Book id --------------------------------> "
+															+ requestInfo.getBookId());
+													System.out.println("Issued Date ----------------------------> "
+															+ requestInfo.getIssuedDate());
+													System.out.println("Expected Return Date -------------------> "
+															+ requestInfo.getExpectedReturnedDate());
+													System.out.println("Returned Date --------------------------> "
+															+ requestInfo.getReturnedDate());
+													System.out.println("Fine -----------------------------------> "
+															+ requestInfo.getFine());
+													System.out.println(
+															"-------------------------------------------------------------------------");
+
+												}
+
+											} catch (LibraryException e) {
+												System.err.println(e.getMessage());
+											}
+											break;
+										case 6:
+											do {
+												System.out.println("1. Search Book By Id");
+												System.out.println("2. Search Book By Book Name");
+												System.out.println("3. Search Book By Authour Name");
+												System.out.println("0. Search Exit");
+
+												do {
+													try {
+														System.out.println("Enter Your Choice");
+														searchBook = scanner.nextInt();
+														flag = true;
+													} catch (InputMismatchException e) {
+														System.err.println("ID Should Contains Only Digits");
+														flag = false;
+														scanner.next();
+													}
+												} while (!flag);
+
+												
+												BookInfo bookInfo = new BookInfo();
+												// List<BookInfo> list = new LinkedList<BookInfo>();
+
+												switch (searchBook) {
+												case 1:
+													do {
+														try {
+															System.out.println("Enter Book ID To Remove:");
+															isbn = scanner.nextInt();
+															validation.validatedId(isbn);
+															flag = true;
+														} catch (InputMismatchException e) {
+															System.err.println("ID Should Contains Only Digits");
+															flag = false;
+															scanner.next();
+														} catch (LibraryException e) {
+															System.err.println(e.getMessage());
+															flag = false;
+														}
+													} while (!flag);
+
+													try {
+														// list = service.
+														List<BookInfo> books = service.search(bookInfo);
+
+														for (BookInfo bookInfo2 : books) {
+															System.out.println("Book Id -----------------------------> "
+																	+ bookInfo2.getIsbn());
+															System.out.println("Book Title --------------------------> "
+																	+ bookInfo2.getBookTitle());
+															System.out.println("Authour Name ------------------------> "
+																	+ bookInfo2.getAuthourName());
+															System.out.println("Book price --------------------------> "
+																	+ bookInfo2.getPrice());
+															System.out.println("Is Available ------------------------> "
+																	+ bookInfo2.isAvailable());
+															System.out.println(
+																	"-------------------------------------------------------------------------");
+
+														}
+
+													} catch (LibraryException e) {
+														System.err.println(e.getMessage());
+													}
+
+													break;
+												case 2:
+													do {
+														try {
+															System.out.println("Enter Book Title");
+															bookTitle = scanner.next();
+															validation.validatedName(bookTitle);
+															flag = true;
+														} catch (LibraryException e) {
+															System.err.println(e.getMessage());
+															flag = false;
+														}
+													} while (!flag);
+
+													bookInfo.setBookTitle(bookTitle);
+													try {
+														// list = service.
+														List<BookInfo> books = service.search(bookInfo);
+
+														for (BookInfo bookInfo2 : books) {
+															System.out.println("Book Id -----------------------------> "
+																	+ bookInfo2.getIsbn());
+															System.out.println("Book Title --------------------------> "
+																	+ bookInfo2.getBookTitle());
+															System.out.println("Authour Name ------------------------> "
+																	+ bookInfo2.getAuthourName());
+															System.out.println("Book price --------------------------> "
+																	+ bookInfo2.getPrice());
+															System.out.println("Is Available ------------------------> "
+																	+ bookInfo2.isAvailable());
+															System.out.println(
+																	"-------------------------------------------------------------------------");
+
+														}
+
+													} catch (LibraryException e) {
+														System.err.println(e.getMessage());
+													}
+
+													break;
+
+												case 3:
+													do {
+														try {
+															System.out.println("Enter Authour Name ");
+															authourName = scanner.next();
+															validation.validatedName(authourName);
+															
+															flag = true;
+														} catch (LibraryException e) {
+															System.err.println(e.getMessage());
+															flag = false;
+														}
+													} while (!flag);
+
+													bookInfo.setAuthourName(authourName);
+													try {
+														// list = service.
+														List<BookInfo> books = service.search(bookInfo);
+
+														for (BookInfo bookInfo2 : books) {
+															System.out.println("Book Id -----------------------------> "
+																	+ bookInfo2.getIsbn());
+															System.out.println("Book Title --------------------------> "
+																	+ bookInfo2.getBookTitle());
+															System.out.println("Authour Name ------------------------> "
+																	+ bookInfo2.getAuthourName());
+															System.out.println("Book price --------------------------> "
+																	+ bookInfo2.getPrice());
+															System.out.println("Is Available ------------------------> "
+																	+ bookInfo2.isAvailable());
+															System.out.println(
+																	"-------------------------------------------------------------------------");
+
+														}
+
+													} catch (LibraryException e) {
+														System.err.println(e.getMessage());
+													}
+
+													break;
+												case 0:
+													break;
+
+												default:
+													System.out.println("Choice Must Be In Between 0 to 3");
+													break;
+												}
+
+											} while (searchBook != 0);
+											break;
+										case 7:
+											do {
+												try {
+													System.out.println("Enter Request Id");
+													requestId = scanner.nextInt();
+
+													flag = true;
+												} catch (InputMismatchException e) {
+													System.err.println("ID Should Contains Only Digits");
+													flag = false;
+													scanner.next();
+												} 
+											} while (!flag);
+
+											try {
+												result = service.isBookIssued(requestId);
+												if (result) {
+													System.out.println("Book Issued");
+												} else {
+													System.out.println("Unable to issue Book");
+												}
+											} catch (LibraryException e) {
+												System.err.println(e.getMessage());
+											}
+											break;
+
+										case 8:
+											do {
+												try {
+													System.out.println("Enter Request Id");
+													requestId = scanner.nextInt();
+
+													flag = true;
+												} catch (InputMismatchException e) {
+													System.err.println("ID Should Contains Only Digits");
+													flag = false;
+													scanner.next();
+												} 
+											} while (!flag);
+											try {
+												result = service.isBookReceived(requestId);
+												if (result) {
+													System.out.println("Book Received");
+												} else {
+													System.out.println("Unable to Receive Book");
+												}
+											} catch (LibraryException e) {
+												System.err.println(e.getMessage());
+											}
+
+											break;
+										case 0:
+											break;
+										default:
+											System.out.println("Out Of Range");
+											break;
+										}
+
+									} while (adminChoice != 0);
+
+								} // End of admin if
+								else if (users.getRole().equalsIgnoreCase("student")
+										|| users.getRole().equalsIgnoreCase("teacher")
+										|| users.getRole().equalsIgnoreCase("reader")) {
+									do {
+										System.out.println("1. Show Books");
+										System.out.println("2. Search Books");
+										System.out.println("3. Request Book");
+										System.out.println("4. Return Book");
+										System.out.println("0. User Log Out ");
+
+										do {
+											try {
+												System.out.println("Enter Your Choice");
+												userChoice = scanner.nextInt();
+												flag = true;
+											} catch (InputMismatchException e) {
+												System.err.println("ID Should Contains Only Digits");
+												flag = false;
+												scanner.next();
+											} 
+										} while (!flag);
+
+										
+										switch (userChoice) {
+										case 1:
+											System.out.println("Books In Library Are:");
+											try {
+												List<BookInfo> books = service.showBooks();
+
+												for (BookInfo bookInfo : books) {
+													System.out.println(
+															"Book Id -----------------------------> " + bookInfo.getIsbn());
+													System.out.println("Book Title --------------------------> "
+															+ bookInfo.getBookTitle());
+													System.out.println("Authour Name ------------------------> "
+															+ bookInfo.getAuthourName());
+													System.out.println("Book price --------------------------> "
+															+ bookInfo.getPrice());
+													System.out.println("Is Available ------------------------> "
+															+ bookInfo.isAvailable());
+													System.out.println(
+															"-------------------------------------------------------------------------");
+
+												}
+
+											} catch (LibraryException e) {
+												System.err.println(e.getMessage());
+											}
+											break;
+										case 2:
+											do {
+												System.out.println("1. Search Book By Id");
+												System.out.println("2. Search Book By Book Name");
+												System.out.println("3. Search Book By Authour Name");
+												System.out.println("0. Search Exit");
+												do {
+													try {
+														System.out.println("Enter Your Choice");
+														searchBook = scanner.nextInt();
+														flag = true;
+													} catch (InputMismatchException e) {
+														System.err.println("ID Should Contains Only Digits");
+														flag = false;
+														scanner.next();
+													} 
+												} while (!flag);
+
+												
+												BookInfo bookInfo = new BookInfo();
+												// List<BookInfo> list = new LinkedList<BookInfo>();
+
+												switch (searchBook) {
+												case 1:
+													do {
+														try {
+
+															System.out.println("Enter Book Id");
+															isbn = scanner.nextInt();
+															validation.validatedId(isbn);
+															flag = true;
+														} catch (InputMismatchException e) {
+															System.err.println("ID Should Contains Only Digits");
+															flag = false;
+															scanner.next();
+														} catch (LibraryException e) {
+															System.err.println(e.getMessage());
+															flag = false;
+														}
+													} while (!flag);
+
+													bookInfo.setIsbn(isbn);
+													try {
+														// list = service.
+														List<BookInfo> books = service.search(bookInfo);
+
+														for (BookInfo bookInfo2 : books) {
+															System.out.println("Book Id -----------------------------> "
+																	+ bookInfo2.getIsbn());
+															System.out.println("Book Title --------------------------> "
+																	+ bookInfo2.getBookTitle());
+															System.out.println("Authour Name ------------------------> "
+																	+ bookInfo2.getAuthourName());
+															System.out.println("Book price --------------------------> "
+																	+ bookInfo2.getPrice());
+															System.out.println("Is Available ------------------------> "
+																	+ bookInfo2.isAvailable());
+															System.out.println(
+																	"-------------------------------------------------------------------------");
+
+														}
+
+													} catch (LibraryException e) {
+														System.err.println(e.getMessage());
+													}
+
+													break;
+												case 2:
+													do {
+														try {
+															System.out.println("Enter Book Title");
+															bookTitle = scanner.next();
+															validation.validatedName(name);
+															flag = true;
+														} catch (InputMismatchException e) {
+															System.err.println("ID Should Contains Only Digits");
+															flag = false;
+															scanner.next();
+														} catch (LibraryException e) {
+															System.err.println(e.getMessage());
+															flag = false;
+														}
+													} while (!flag);
+
+													
+													bookInfo.setBookTitle(bookTitle);
+													try {
+														// list = service.
+														List<BookInfo> books = service.search(bookInfo);
+
+														for (BookInfo bookInfo2 : books) {
+															System.out.println("Book Id -----------------------------> "
+																	+ bookInfo2.getIsbn());
+															System.out.println("Book Title --------------------------> "
+																	+ bookInfo2.getBookTitle());
+															System.out.println("Authour Name ------------------------> "
+																	+ bookInfo2.getAuthourName());
+															System.out.println("Book price --------------------------> "
+																	+ bookInfo2.getPrice());
+															System.out.println("Is Available ------------------------> "
+																	+ bookInfo2.isAvailable());
+															System.out.println(
+																	"-------------------------------------------------------------------------");
+
+														}
+
+													} catch (LibraryException e) {
+														System.err.println(e.getMessage());
+													}
+
+													break;
+
+												case 3:
+													do {
+														try {
+															System.out.println("Enter Authour Name ");
+															authourName = scanner.next();
+															bookInfo.setAuthourName(authourName);
+															validation.validatedName(authourName);
+															flag = true;
+														} catch (InputMismatchException e) {
+															System.err.println("ID Should Contains Only Digits");
+															flag = false;
+															scanner.next();
+														} catch (LibraryException e) {
+															System.err.println(e.getMessage());
+															flag = false;
+														}
+													} while (!flag);
+
+													
+													
+													try {
+														// list = service.
+														List<BookInfo> books = service.search(bookInfo);
+
+														for (BookInfo bookInfo2 : books) {
+															System.out.println("Book Id -----------------------------> "
+																	+ bookInfo2.getIsbn());
+															System.out.println("Book Title --------------------------> "
+																	+ bookInfo2.getBookTitle());
+															System.out.println("Authour Name ------------------------> "
+																	+ bookInfo2.getAuthourName());
+															System.out.println("Book price --------------------------> "
+																	+ bookInfo2.getPrice());
+															System.out.println("Is Available ------------------------> "
+																	+ bookInfo2.isAvailable());
+															System.out.println(
+																	"-------------------------------------------------------------------------");
+
+														}
+
+													} catch (LibraryException e) {
+														System.err.println(e.getMessage());
+													}
+
+													break;
+												case 0:
+													break;
+
+												default:
+													System.out.println("Search Choice Must Be In Between 0 to 3");
+													break;
+												}
+
+											} while (searchBook != 0);
+											break;
+										case 3:
+											do {
+												try {
+													System.out.println("Enter User Id");
+													id = scanner.nextInt();
+													validation.validatedId(id);
+													if(id == userId) {
+														flag = true;
+													}else {
+														System.err.println("Enter Your Id");
+														flag = false;
+													}
+													
+												} catch (InputMismatchException e) {
+													System.err.println("ID Should Contains Only Digits");
+													flag = false;
+													scanner.next();
+												} catch (LibraryException e) {
+													System.err.println(e.getMessage());
+													flag = false;
+												}
+											} while (!flag);
+
+											do {
+												try {
+													System.out.println("Enter Book Id");
+													isbn = scanner.nextInt();
+													validation.validatedId(isbn);
+													flag = true;
+												} catch (InputMismatchException e) {
+													System.err.println("ID Should Contains Only Digits");
+													flag = false;
+													scanner.next();
+												} catch (LibraryException e) {
+													System.err.println(e.getMessage());
+													flag = false;
+												}
+											} while (!flag);
+
+											
+
+											LibraryUsers libraryUsers = new LibraryUsers();
+											libraryUsers.setId(id);
+
+											BookInfo bookInfo = new BookInfo();
+											bookInfo.setIsbn(isbn);
+
+											try {
+												RequestInfo requestInfo = new RequestInfo();
+												requestInfo = service.bookRequest(id, isbn);
+												if (requestInfo != null) {
+													System.out.println("Record Inserted");
+
+												} else {
+													System.out.println("Unable to Insert");
+
+												}
+
+											} catch (LibraryException e) {
+												System.err.println(e.getMessage());
+											}
+
+											break;
+										case 4:
+											do {
+												try {
+													System.out.println("Enter User Id");
+													id = scanner.nextInt();
+													validation.validatedId(id);
+													if(id == userId) {
+														flag = true;
+													}else {
+														System.err.println("Enter Your Id");
+														flag = false;
+													}
+													
+												} catch (InputMismatchException e) {
+													System.err.println("ID Should Contains Only Digits");
+													flag = false;
+													scanner.next();
+												} catch (LibraryException e) {
+													System.err.println(e.getMessage());
+													flag = false;
+												}
+											} while (!flag);
+											do {
+												try {
+													System.out.println("Enter Book Id");
+													isbn = scanner.nextInt();
+													validation.validatedId(isbn);
+													flag = true;
+												} catch (InputMismatchException e) {
+													System.err.println("ID Should Contains Only Digits");
+													flag = false;
+													scanner.next();
+												} catch (LibraryException e) {
+													System.err.println(e.getMessage());
+													flag = false;
+												}
+											} while (!flag);
+
+
+											try {
+												result = service.bookReturn(id, isbn);
+												if (result) {
+													System.out.println("Returning request placed to Admin");
+												} else {
+													System.out.println("Invalid Returning");
+												}
+											} catch (LibraryException e) {
+												System.err.println(e.getMessage());
+											}
+
+										case 0:
+											break;
+
+										default:
+											System.out.println("Range Should be in Between  0 to 4");
+											break;
+										}
+
+									} while (userChoice != 0); // End Of Users do while
+								} // End Of Users Else If
+
+							} else {
+								System.err.println("User Unable to Login / Invalid MailId or Password");
+							}
+						} catch (LibraryException e) {
+							System.err.println(e.getMessage());
+						} // End Of try Authentication
+						break;
+//					case 0:
+//						break;
+
+					default:
+						System.err.println("Choice Should within in the Range");
+						break;
 					}
-					break;
 
-				default:
-					break;
-				}
-			} while (choice != 0);
-		} catch (IllegalArgumentException e) {
+				} while (true);
 
-			System.err.println(e.getMessage());
-
-		}
-
-	}
-
-}
+			} // End of Scanner Try resource
+		}// End of Main
+	}// End of Class
